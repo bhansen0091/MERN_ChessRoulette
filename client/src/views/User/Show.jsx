@@ -3,11 +3,11 @@ import Axios from 'axios';
 
 
 const Show = props => {
-    const [template, setTemplate] = useState(false);
+    const [user, setUser] = useState(false);
 
     useEffect(() => {
-        Axios.get(`http://localhost:8000/api/templates/${props.id}`)
-        .then(res => setTemplate(res.data.results[0]))
+        Axios.get(`http://localhost:8000/api/users/${props.id}`)
+        .then(res => setUser(res.data.results[0]))
         .catch(err => console.log(err))
     }, [props])
 
@@ -15,8 +15,8 @@ const Show = props => {
 
         <div className="card col-4 mx-auto">
             <div className="card-body">
-                <h2 className="card-title">{template.itemOne}</h2>
-                <p className="card-text">{template.itemTwo}</p>
+                <h2 className="card-title">{user.firstName}</h2>
+                <p className="card-text">{user.lastName}</p>
             </div>
         </div>
     )
