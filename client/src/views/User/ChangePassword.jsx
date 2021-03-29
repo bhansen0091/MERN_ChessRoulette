@@ -1,25 +1,25 @@
-import TemplateForm from '../components/TemplateForm';
+import ChangePasswordForm from '../../components/User/ChangePassword/ChangePasswordForm';
 import { navigate } from '@reach/router';
 import {useState, useEffect} from 'react';
 import Axios from 'axios';
 
 const Edit = props => {
-    const [template, setTemplate] = useState(false);
+    const [user, setUser] = useState(false);
 
     useEffect(() => {
-        Axios.get(`http://localhost:8000/api/templates/${props.id}`)
-            .then(res => setTemplate(res.data.results[0]))
+        Axios.get(`http://localhost:8000/api/users/${props.id}`)
+            .then(res => setUser(res.data.results[0]))
             .catch(err => console.log(err))
     }, [props])
 
     const [errors, setErrors] = useState({
-        itemOne: "",
-        itemTwo: ""
+        password: "",
+        confirmPassword: ""
     })
 
     const handleChange = e => {
-        setTemplate({
-            ...template,
+        setUser({
+            ...user,
             [e.target.name] : e.target.value
         })
     }
@@ -27,7 +27,7 @@ const Edit = props => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        Axios.put(`http://localhost:8000/api/templates/${props.id}`, template)
+        Axios.put(`http://localhost:8000/api/users/${props.id}`, user)
         .then(res => navigate('/'))
         .catch(err => {
             console.log(err.response.data.errors);
@@ -38,10 +38,10 @@ const Edit = props => {
     return(
         <>
             {
-                template?
-                <TemplateForm 
-                    inputs = {template}
-                    title = "Edit Template"
+                user?
+                <ChangePasswordForm 
+                    inputs = {user}
+                    title = "Change Password"
                     submitValue = "Edit"
                     handleInputChange = {handleChange}
                     handleSubmit = {handleSubmit}
