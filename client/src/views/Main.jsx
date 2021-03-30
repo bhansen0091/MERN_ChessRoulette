@@ -30,14 +30,14 @@ const Main = props => {
                     {
                         users.map((u,i) => {
                             return <tr key={i}>
-                                    <td>{u.firstName}</td>
+                                    <td>{u.firstName} {u.lastName}</td>
                                     <td>
-                                        <Link className="btn btn-warning" to={`/users/edit/${u._id}`}>Edit</Link>
-                                        <Link className="btn btn-info" to={`/users/edit/password/${u._id}`}>Edit Password</Link>
+                                        <Link className="btn btn-warning" to={`/users/edit/${u._id}`}>Edit</Link> &nbsp;
+                                        {/* <Link className="btn btn-info" to={`/users/edit/password/${u._id}`}>Edit Password</Link> */}
                                         <button 
                                             className="btn btn-danger"
                                             onClick={() => {handleDestroyTemplate(u._id)}}
-                                        >Delete</button>
+                                        >Delete</button> &nbsp;
                                         <Link 
                                             to={`/users/show/${u._id}`}
                                             className="btn btn-success">Show User</Link>

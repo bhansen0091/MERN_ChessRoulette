@@ -1,4 +1,4 @@
-import ChangePasswordForm from '../../components/User/ChangePassword/ChangePasswordForm';
+import ChangePasswordForm from '../../components/User/ChangePassword';
 import { navigate } from '@reach/router';
 import {useState, useEffect} from 'react';
 import Axios from 'axios';

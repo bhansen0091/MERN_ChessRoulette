@@ -2,7 +2,7 @@ import {navigate} from '@reach/router'
 
 
 const UserForm = props => {
-    const {inputs, handleInputChange, handleSubmit, title, submitValue, errors, editing} = props;
+    const {inputs, handleInputChange, handleSubmit, title, submitValue, errors, editing, showPopup} = props;
 
     const handleCancel = (e) => {
         e.preventDefault();
@@ -99,8 +99,16 @@ const UserForm = props => {
             </> : 
             null}
             
-            <input type="submit" value={submitValue} className="btn btn-primary"/>
-
+            <input type="submit" value={submitValue} className="btn btn-primary"/> &nbsp;
+            {editing ?
+                <button
+                    className="btn btn-info"
+                    onClick = {showPopup}
+                >
+                    Edit Password
+                </button> 
+                :
+                ""}
             <button className="btn btn-dark mx-2" onClick={handleCancel}>Cancel</button>
         </form>
     )

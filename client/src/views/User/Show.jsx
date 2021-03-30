@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import Axios from 'axios';
+import { navigate } from '@reach/router';
 
 
 const Show = props => {
@@ -18,6 +19,7 @@ const Show = props => {
                 <h2 className="card-title">{user.firstName}</h2>
                 <p className="card-text">{user.lastName}</p>
             </div>
+            <button className="btn btn-warning" onClick={() => navigate(`/users/edit/${props.id}`)}>Edit</button>
         </div>
     )
 }
