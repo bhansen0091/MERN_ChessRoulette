@@ -12,4 +12,4 @@ app.use(cors(),express.json(),express.urlencoded({"extended":true}));
 
 require('./server/config/database.config');
 require('./server/routes/user.routes')(app);
-// require('./server/routes/game.routes')(app);  // eventually, pull in game routes
+require('./server/routes/game.routes')(app);  // eventually, pull in game routes

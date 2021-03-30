@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const {User} = require("../models/user.model");
 
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
             .catch(err => res.status(404).json({errors: err.errors}))
     },
     show : (req,res) => {
-        User.find({_id: req.params.id})
+        User.findOne({_id: req.params.id})
             .then(data => res.json({results:data}))
             .catch(err => res.status(404).json({errors: err.errors}))
     },

@@ -1,0 +1,22 @@
+/* *{
+
+}
+
+.row{
+
+} */
+
+.tile{
+    width: 75px;
+    height: 75px;
+    display: inline-block;
+}
+
+.white{
+    background-color: antiquewhite;
+}
+
+.black{
+    background-color: black;
+    color: antiquewhite;
+}
