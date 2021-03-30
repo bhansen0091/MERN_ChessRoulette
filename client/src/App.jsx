@@ -5,6 +5,7 @@ import Create from './views/User/Create';
 import Edit from './views/User/Edit';
 import Show from './views/User/Show';
 import Main from './views/Main'
+import GameRoom from './views/Game/GameRoom';
 import './App.css';
 
 function App() {
@@ -20,6 +21,9 @@ function App() {
         <Edit path="/users/edit/:id" />
         <ChangePassword path="/users/edit/password/:id" />
         <Show path="/users/show/:id" />
+
+        <GameRoom path="/games" />
+        <GameRoom path="/games/:id" />
       </Router>
     </div>
   );

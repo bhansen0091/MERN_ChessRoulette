@@ -8,7 +8,7 @@ const Show = props => {
 
     useEffect(() => {
         Axios.get(`http://localhost:8000/api/users/${props.id}`)
-        .then(res => setUser(res.data.results[0]))
+        .then(res => setUser(res.data.results))
         .catch(err => console.log(err))
     }, [props])
 
