@@ -2,18 +2,18 @@ import axios from "axios";
 import React, {useState, useEffect} from "react";
 import GameBoard from "../../components/Game/GameBoard";
 
-import blackBishop from "../../components/Game/img/blackBishop.png";
-import blackKing from "../../components/Game/img/blackKing.png";
-import blackKnight from "../../components/Game/img/blackKnight.png";
-import blackPawn from "../../components/Game/img/blackPawn.png";
-import blackQueen from "../../components/Game/img/blackQueen.png";
-import blackRook from "../../components/Game/img/blackRook.png";
-import whiteBishop from "../../components/Game/img/whiteBishop.png";
-import whiteKing from "../../components/Game/img/whiteKing.png";
-import whiteKnight from "../../components/Game/img/whiteKnight.png";
-import whitePawn from "../../components/Game/img/whitePawn.png";
-import whiteQueen from "../../components/Game/img/whiteQueen.png";
-import whiteRook from "../../components/Game/img/whiteRook.png";
+import blackbishop from "../../components/Game/img/blackBishop.png";
+import blackking from "../../components/Game/img/blackKing.png";
+import blackknight from "../../components/Game/img/blackKnight.png";
+import blackpawn from "../../components/Game/img/blackPawn.png";
+import blackqueen from "../../components/Game/img/blackQueen.png";
+import blackrook from "../../components/Game/img/blackRook.png";
+import whitebishop from "../../components/Game/img/whiteBishop.png";
+import whiteking from "../../components/Game/img/whiteKing.png";
+import whiteknight from "../../components/Game/img/whiteKnight.png";
+import whitepawn from "../../components/Game/img/whitePawn.png";
+import whitequeen from "../../components/Game/img/whiteQueen.png";
+import whiterook from "../../components/Game/img/whiteRook.png";
 
 
 
@@ -38,19 +38,20 @@ const GameRoom = ({id}) => {
                 statusFromParent={game? game.boardStatus : false}
                 logStatus={logStatus}
                 images={{
-                    blackBishop,
-                    blackKing,
-                    blackKnight,
-                    blackPawn,
-                    blackQueen ,
-                    blackRook,
-                    whiteBishop,
-                    whiteKing,
-                    whiteKnight,
-                    whitePawn,
-                    whiteQueen ,
-                    whiteRook,
+                    blackbishop,
+                    blackking,
+                    blackknight,
+                    blackpawn,
+                    blackqueen ,
+                    blackrook,
+                    whitebishop,
+                    whiteking,
+                    whiteknight,
+                    whitepawn,
+                    whitequeen ,
+                    whiterook,
                 }}
+                gameId={id}
             />
             <br /><br />
         </>

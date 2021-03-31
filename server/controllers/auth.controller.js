@@ -66,10 +66,28 @@ module.exports = {
                     bcrypt.compare(req.body.password,data.password)
                         .then(isValid => {
                             if (isValid === true) {
-                                res.cookie("usertoken",jwt.sign({id:data._id}, process.env.JWT_KEY), {
-                                    httpOnly:true,
-                                    expires: new Date(Date.now() + 90000000000)
-                                }).json({msg:"success"})
+                                if(req.body.newPassword === req.body.confirmPassword){
+                                    // change it in the database with bcrypt here
+                                    bcrypt.hash(req.body.newPassword,10)
+                                        .then(hash => {
+                                            User.updateOne({_id:data._id}, {password: hash}, {runValidators:true, new:true})
+                                                .catch(err => res.status(400).json({errors: err.errors}))
+                                        })
+                                        .catch(err => console.error({errors: err}));
+
+                                    res.cookie("usertoken",jwt.sign({id:data._id}, process.env.JWT_KEY), {
+                                        httpOnly:true,
+                                        expires: new Date(Date.now() + 90000000000)
+                                    }).json({msg:"Password updated!"})
+                                }
+                                else{
+                                    // respond with errors about how passwords don't match.
+                                    console.log("This is an error.");
+                                    res.json({error: "Passwords don't match."});
+                                    return;
+                                }
+
+                                
                             }
                             else{
                                 res.json({error: "Invalid password."});

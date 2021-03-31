@@ -11,50 +11,49 @@ const ChangePassword = ({goBack, handleChange, handleSubmit, errors, inputs}) =>
             <div className="form-group">
                 <label htmlFor="oldpw">Old Password:</label><br />
                 <input
-                    type="text"
+                    type="password"
                     name="oldpw"
                     id="oldpw"
                     onChange={handleChange}
                     value={inputs.oldpw}
                 />
-                <span className="text-danger">{errors.oldpw? errors.oldpw : ""}</span>
+                <p className="text-danger">{errors.oldpw? errors.oldpw : ""}</p>
             </div>
 
             <div className="form-group">
                 <label htmlFor="newpw">New Password:</label><br />
                 <input
-                    type="text"
+                    type="password"
                     name="newpw"
                     id="newpw"
                     onChange={handleChange}
                     value={inputs.newpw}
                 />
-                <span className="text-danger">{errors.newpw? errors.newpw : ""}</span>
+                <p className="text-danger">{errors.newpw? errors.newpw : ""}</p>
             </div>
 
             <div className="form-group">
                 <label htmlFor="confirmpw">Confirm Password:</label><br />
                 <input
-                    type="text"
+                    type="password"
                     name="confirmpw"
                     id="confirmpw"
                     onChange = {handleChange}
                     value={inputs.confirmpw}
                 />
-                <span className="text-danger">{errors.confirmpw? errors.confirmpw : ""}</span>
+                <p className="text-danger">{errors.confirmpw? errors.confirmpw : ""}</p>
             </div>
 
-
             <button
-                className="btn btn-success"
-                style = {{marginBottom: "10px"}}
-                // onClick = {handleSubmit}
+              type="submit"
+              className="btn btn-success mb-3 mx-1"
             >
             Change Password
-            </button>&nbsp; &nbsp;
+            </button>
             <button 
-            className="btn btn-warning"
+            className="btn btn-warning mb-3 mx-1"
             onClick = {goBack}
+
             >
             Cancel
             </button>
