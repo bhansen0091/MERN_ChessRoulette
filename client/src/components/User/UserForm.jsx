@@ -6,7 +6,7 @@ const UserForm = props => {
 
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/");
+        navigate("/dashboard");
     }
 
     return(

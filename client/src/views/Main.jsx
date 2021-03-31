@@ -1,53 +1,89 @@
 import { useState, useEffect } from 'react';
-import { Link } from '@reach/router';
+import { Link, navigate } from '@reach/router';
 import Axios from 'axios';
 
 const Main = props => {
     const [users, setUsers] = useState(null);
+    const [loggedIn, setLoggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
+                firstName:"No One",
+                lastName: "LoggedIn"
+            })
 
     useEffect(() => {
-        Axios.get("http://localhost:8000/api/users")
+        Axios.get("http://localhost:8000/api/users", {withCredentials:true})
             .then(res => setUsers(res.data.results))
-            .catch(err => console.log(err))
+            .catch(err => {
+                if (err.response.status === 401) {
+                    navigate("/");
+                }
+            })
     }, [])
 
-    const handleDestroyTemplate = (id) => {
-        Axios.delete(`http://localhost:8000/api/users/${id}`)
+    const handleDestroyUser = (id) => {
+        Axios.delete(`http://localhost:8000/api/users/${id}`, {withCredentials:true})
             .then(res => setUsers(res.data.results))
+            .catch(err => console.log(err))
+    }
+    
+    const logout = () => {
+        Axios.get(`http://localhost:8000/api/logout`, {withCredentials:true})
+            .then(res => {
+                localStorage.clear();
+                navigate("/")
+            })
             .catch(err => console.log(err))
     }
 
     return(
-        users ?
-            <table className="table table-hover col-7 mx-auto border">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        users.map((u,i) => {
-                            return <tr key={i}>
-                                    <td>{u.firstName} {u.lastName}</td>
-                                    <td>
-                                        <Link className="btn btn-warning" to={`/users/edit/${u._id}`}>Edit</Link> &nbsp;
-                                        {/* <Link className="btn btn-info" to={`/users/edit/password/${u._id}`}>Edit Password</Link> */}
-                                        <button 
-                                            className="btn btn-danger"
-                                            onClick={() => {handleDestroyTemplate(u._id)}}
-                                        >Delete</button> &nbsp;
-                                        <Link 
-                                            to={`/users/show/${u._id}`}
-                                            className="btn btn-success">Show User</Link>
-                                    </td>
+        <div>
+            <div className="col-12">
+                <h4>{loggedIn.firstName} {loggedIn.lastName}</h4>
+                <button 
+                    className="btn btn-sm btn-danger"
+                    onClick={logout}
+                    >Logout
+                </button>
+            </div>
+            {
+                users ?
+                    <table className="col-7 border table table-hover mx-auto">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Actions</th>
                             </tr>
-                        })
-                    }
-                </tbody>
-            </table> :
-            <h2>Loading...</h2>
+                        </thead>
+                        <tbody>
+                            {
+                                users.map((user,i) => {
+                                    return <tr key={i}>
+                                            <td>{user.firstName}</td>
+                                            <td>
+                                                {
+                                                    // users ?
+                                                    user._id === loggedIn._id ?
+                                                    <>
+                                                        <Link className="btn btn-warning" to={`/users/edit/${user._id}`}>Edit</Link>
+                                                        <button 
+                                                        className="btn btn-danger"
+                                                        onClick={() => {handleDestroyUser(user._id)}}
+                                                        >Delete</button>
+                                                    </>
+                                                    :
+                                                    null
+                                                }
+                                                    <Link 
+                                                    to={`/users/show/${user._id}`}
+                                                    className="btn btn-success">View</Link>
+                                            </td>
+                                    </tr>
+                                })
+                            }
+                        </tbody>
+                    </table> :
+                    <h2>Loading...</h2>
+            }
+        </div>
     )
 }
 

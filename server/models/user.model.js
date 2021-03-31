@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+    bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
     firstName: {
@@ -17,7 +18,10 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Required Field"],
-        minlength: [5, "Must be at least 5 characters long."]
+        validate: {
+            validator: val => /^([\w-\.]+@([\w-]+\.)+[\w-]+)?$/.test(val),
+            message: `Invalid email.`
+        }
     },
     password: {
         type: String,
@@ -25,6 +29,25 @@ const UserSchema = new mongoose.Schema({
         minlength: [8, "Must be at least 8 characters long."]
     }
 }, {timestamps:true})
+
+UserSchema.virtual('confirmPassword')
+    .get(() => this._confirmPassword)
+    .set(value => this._confirmPassword = value);
+
+UserSchema.pre('validate', function(next){
+    if (this.password !== this.confirmPassword) {
+        this.invalidate('confirmPassword', "Passwords do not match.")
+    }
+    next();
+})
+
+UserSchema.pre('save', function(next){
+    bcrypt.hash(this.password,10)
+    .then(hash => {
+        this.password = hash;
+        next();
+    })
+})
 
 const User = new mongoose.model("User", UserSchema);
 

@@ -1,8 +1,11 @@
-/* *{
-
+*{
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+    vertical-align: top;
 }
 
-.row{
+/* .row{
 
 } */
 
@@ -13,10 +16,10 @@
 }
 
 .white{
-    background-color: antiquewhite;
+    background-color: navajowhite;
 }
 
 .black{
-    background-color: black;
+    background-color: peru;
     color: antiquewhite;
 }

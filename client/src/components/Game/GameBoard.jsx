@@ -1,37 +1,74 @@
 import {useState, useEffect} from "react";
 
 import styles from "./GameBoard.module.css";
+import blackBishop from "./img/blackBishop.png";
 
-const GameBoard = (props) => {
+const GameBoard = ({statusFromParent, logStatus, images}) => {
 
-    const [boardLayout, setBoardLayout] = useState([]);
-    
-    
+    const [boardStatus, setBoardStatus] = useState(false);
+    const [activeTile, setActiveTile] = useState(false);
+    const [availableMoves, setAvailableMoves] = useState(false);
+
     useEffect( () => {
-        const boardBuilder = [];
-        const letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
-        for(let i=8; i>=1; i--){
-            const newRow = [];
-            for(let j=0; j<8; j++){
-                newRow.push(`${letters[j]} ${i}  `);
-            }
-            boardBuilder.push(newRow);
+        setBoardStatus(statusFromParent);
+    }, [statusFromParent, activeTile])
+
+    const activateTile = (file, rank) => {
+        // console.log(boardStatus[file][rank].occupied);
+        if(activeTile[0] === file && activeTile[1] === rank){
+            setActiveTile(false);
+            setAvailableMoves(false);
         }
-        setBoardLayout(boardBuilder);
-    }, []);
+        else if(boardStatus[file][rank].occupied){
+            setActiveTile([file, rank]);
+            console.log(boardStatus[file][rank].occupied.color, boardStatus[file][rank].occupied.type)
+        }
+        const moves = checkMoves(boardStatus[file][rank].occupied, file, rank)
+    }
+
+    const checkMoves = (piece, file, rank) => {
+        const moves = [];
+        if(piece.type === "Pawn"){
+            if(piece.color === "white")
+                for(let i=1; i<=2 && (!boardStatus[file][rank-i].occupied); i++){
+                    moves.push([file-i, rank]);
+                }
+        }
+        setAvailableMoves(moves);
+    }
+
 
     return (
         <div id="board">
-            {
-                boardLayout.map( (row, i) =>
+            {/* <button onClick={logStatus}>Click</button> */}
+            {boardStatus?
+                boardStatus.map( (row, i) =>
                     <div className={styles.row} key={i}>
                         {row.map( (tile, j) =>
-                            <div className={`${styles.tile} ${(i+j) % 2 === 0? styles.white : styles.black}`} key={j}>
-                                {tile}
+                            <div
+                                className={`${styles.tile} ${(i+j) % 2 === 0? styles.white : styles.black}`} 
+                                key={j}
+                                onClick={() => activateTile(i, j)}
+                                style={activeTile[0] === i && activeTile[1] === j?
+                                    {display: "inline-flex", justifyContent: "center", alignItems: "center", backgroundColor: "dodgerblue"}
+                                    :
+                                    {display: "inline-flex", justifyContent: "center", alignItems: "center"}
+                                }
+                            >
+                                {tile.occupied? 
+                                    <img 
+                                        src={images[`${tile.occupied.color}${tile.occupied.type}`]} 
+                                        alt={`${tile.occupied.color[0]} ${tile.occupied.abbrev}`}
+                                    />
+                                    : 
+                                    " "
+                                }
                             </div>
                         )}
                     </div>
                 )
+                :
+                <p>Loading...</p>
             }
         </div>
     );
