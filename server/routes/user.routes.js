@@ -1,16 +1,6 @@
-// const UserController = require("../controllers/user.controller");
 const LogRegController = require('../controllers/auth.controller'),
     UserController = require('../controllers/user.controller'),
     {authenticate} = require('../config/jwt.config');
-
-// module.exports = (app) => {
-//     app.get('/api/users', UserController.index);
-//     // app.post('/api/users', UserController.create);
-//     app.get('/api/users/:id', UserController.show);
-//     app.put('/api/users/:id', UserController.update);
-//     app.delete('/api/users/:id', UserController.destroy);
-// }
-
 
 module.exports = (app) => {
     app.post('/api/register', LogRegController.register);

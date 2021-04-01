@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const {UserSchema} = require("./user.model");
 const allBoards = require("../GameBoards/allBoards");
+const allSpecialInfo = require("../GameSpecialInfo/allSpecialInfo");
 
 
 const GameSchema = new mongoose.Schema({
@@ -29,6 +30,14 @@ const GameSchema = new mongoose.Schema({
     whiteToPlay: {
         type: Boolean,
         default: true
+    },
+    moveLog: {
+        type: [[String]],
+        default: []
+    },
+    specialInfo: {
+        type: {},
+        default: allSpecialInfo.standardChess()
     }
     
 }, {timestamps:true});

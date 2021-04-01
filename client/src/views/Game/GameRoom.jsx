@@ -37,6 +37,7 @@ const GameRoom = ({id}) => {
                 let white = res.data.results.playerWhite.length === 1;
                 let black = res.data.results.playerBlack.length === 1;
                 setPlayersJoined({white, black});
+                // console.log(res.data.results);
             }).catch(err => console.error(err.errors));
     }, [id]);
 
@@ -101,6 +102,13 @@ const GameRoom = ({id}) => {
             .catch(err => console.error({errors: err}));
     }
 
+    const flipTurn = () => {
+        setGame({
+            ...game,
+            whiteToPlay: !game.whiteToPlay
+        });
+    }
+
     return (
         <>
             <button
@@ -123,6 +131,8 @@ const GameRoom = ({id}) => {
             
             <GameBoard
                 statusFromParent={game? game.boardStatus : false}
+                whiteToPlay={game? game.whiteToPlay : true}
+                parentLog={game? game.moveLog : []}
                 logStatus={logStatus}
                 images={{
                     blackbishop,
@@ -139,7 +149,9 @@ const GameRoom = ({id}) => {
                     whiterook,
                 }}
                 gameId={id}
-                whiteToPlay={game? game.whiteToPlay : true}
+                specialInfo={game? game.specialInfo : false}
+                
+                flipTurn={flipTurn}
             />
             <button className="btn btn-danger my-5" onClick={deleteGame}>Delete this game</button>
         </>
