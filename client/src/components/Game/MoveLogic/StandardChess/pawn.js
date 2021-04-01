@@ -8,24 +8,46 @@ const checkMoves =  (tile, boardStatus) => {
     const fileIdx = fileArray.indexOf(tile.file);
     const piece = tile.occupied;
 
-    // console.log(tile);
-    console.log(rankIdx);
-
-    // console.log(`file: ${tile.file}, rank: ${tile.rank}`);
     const moves = [];
-    if(piece.type === "pawn"){
-        if(piece.color === "white"){
-            if(!boardStatus[rankIdx-1][fileIdx].occupied) moves.push([tile.file, tile.rank + 1])
-            if(tile.rank === 2){ // Let white pawns move 2 on first move:
-                if(!boardStatus[rankIdx-2][fileIdx].occupied) moves.push([tile.file, 4]);
-            }
-        
-        } else if (piece.color === "black") {
-            if(!boardStatus[rankIdx+1][fileIdx].occupied) moves.push([tile.file, tile.rank - 1])
-            if(tile.rank === 7){ // Let black pawns move 2 on first move:
-                if(!boardStatus[rankIdx+2][fileIdx].occupied) moves.push([tile.file, 5]);
-            }
+    
+    if(piece.color === "white"){
+        if(rankIdx > 0 && !boardStatus[rankIdx-1][fileIdx].occupied){
+            moves.push([tile.file, tile.rank + 1])
         }
+        if(tile.rank === 2){ // Let white pawns move 2 on first move:
+            if(!(boardStatus[rankIdx-2][fileIdx].occupied || boardStatus[rankIdx-1][fileIdx].occupied)) moves.push([tile.file, 4]);
+        }
+
+        // Capturing
+        if(fileIdx > 0 && rankIdx > 0
+            && boardStatus[rankIdx-1][fileIdx-1].occupied
+            && boardStatus[rankIdx-1][fileIdx-1].occupied.color !== piece.color){
+                moves.push([fileArray[fileIdx - 1], tile.rank + 1]);
+            }
+        if(fileIdx < 7 && rankIdx > 0
+            && boardStatus[rankIdx-1][fileIdx+1].occupied
+            && boardStatus[rankIdx-1][fileIdx+1].occupied.color !== piece.color){
+                moves.push([fileArray[fileIdx + 1], tile.rank + 1]);
+            }
+
+    
+    } else if (piece.color === "black") {
+        if(!boardStatus[rankIdx+1][fileIdx].occupied) moves.push([tile.file, tile.rank - 1])
+        if(tile.rank === 7){ // Let black pawns move 2 on first move:
+            if(!(boardStatus[rankIdx+2][fileIdx].occupied || boardStatus[rankIdx+1][fileIdx].occupied)) moves.push([tile.file, 5]);
+        }
+
+        // Capturing
+        if(fileIdx > 0 && rankIdx < 7
+            && boardStatus[rankIdx+1][fileIdx-1].occupied
+            && boardStatus[rankIdx+1][fileIdx-1].occupied.color === "white"){
+                moves.push([fileArray[fileIdx - 1], tile.rank - 1]);
+            }
+        if(fileIdx < 7 && rankIdx < 7
+            && boardStatus[rankIdx+1][fileIdx+1].occupied
+            && boardStatus[rankIdx+1][fileIdx+1].occupied.color === "white"){
+                moves.push([fileArray[fileIdx + 1], tile.rank - 1]);
+            }
     }
     return moves;
 }

@@ -8,13 +8,27 @@ const GameSchema = new mongoose.Schema({
         type: String,
         required: [true, "Required Field"],
     },
-    players: {
+    playerWhite: {
+        type: [UserSchema],
+        required: [true, "Required Field"],
+        maxLength: 1
+    },
+    playerBlack: {
+        type: [UserSchema],
+        required: [true, "Required Field"],
+        maxLength: 1
+    },
+    spectators: {
         type: [UserSchema],
         required: [true, "Required Field"],
     },
     boardStatus: {
         type: Array,
         default: allBoards.standardChess()
+    },
+    whiteToPlay: {
+        type: Boolean,
+        default: true
     }
     
 }, {timestamps:true});

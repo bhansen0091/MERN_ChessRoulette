@@ -2,11 +2,11 @@ import {useState, useEffect} from "react";
 import Axios from "axios";
 
 import styles from "./GameBoard.module.css";
-import blackBishop from "./img/blackBishop.png";
+// import blackBishop from "./img/blackBishop.png";
 
 const rules = require("./MoveLogic/StandardChess/standardChessMoves")
 
-const GameBoard = ({statusFromParent, logStatus, images, gameId}) => {
+const GameBoard = ({statusFromParent, logStatus, images, gameId, whiteToPlay}) => {
 
     const [boardStatus, setBoardStatus] = useState(false);
     const [activeTile, setActiveTile] = useState(false);
@@ -69,7 +69,9 @@ const GameBoard = ({statusFromParent, logStatus, images, gameId}) => {
                                     ${styles.tile}
                                     ${(i+j) % 2 === 0? styles.white : styles.black}
                                     ${activeTile.file === tile.file && activeTile.rank === tile.rank ? styles.active : ""}
-                                    ${movesToHere(tile) ? styles.available : ""}
+                                    ${movesToHere(tile) ? 
+                                        tile.occupied? styles.capture :styles.available
+                                        : ""}
                                 `} 
                                 key={j}
                                 id={`${tile.file}${tile.rank}`}

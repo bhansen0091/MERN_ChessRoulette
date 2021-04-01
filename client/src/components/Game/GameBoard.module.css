@@ -5,8 +5,9 @@
     vertical-align: top;
 }
 
-/* .tileRow{
-} */
+.tileRow{
+    min-width: 600px;
+}
 
 .tile{
     width: 75px;
@@ -32,5 +33,9 @@
 .available{
     background-color: limegreen;
     border: 2px solid forestgreen;
-    box-sizing: border-box;
+}
+
+.capture{
+    background-color: firebrick;
+    border: 2px solid lightcoral;
 }
