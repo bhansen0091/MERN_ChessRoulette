@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+// import {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Router, Link} from '@reach/router';
 // import Create from './views/User/Create';
@@ -10,7 +10,7 @@ import LogReg from './views/User/LogReg';
 import NewGame from './views/Game/NewGame';
 import './App.css';
 
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 const App = () => {
 

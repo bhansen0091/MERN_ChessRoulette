@@ -39,6 +39,10 @@ io.on("connection", socket => {
         //io.emit sends to all clients connected
         io.emit("updatingMessages", chats)
     })
+
+    // socket.on("madeAMove", data => {
+    //     io.emit("newMoveCameIn", data);
+    // });
 })
 
 

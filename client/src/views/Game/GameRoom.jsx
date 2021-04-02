@@ -17,7 +17,6 @@ import whitequeen from "../../components/Game/img/whiteQueen.png";
 import whiterook from "../../components/Game/img/whiteRook.png";
 
 
-
 const GameRoom = ({id}) => {
 
     const [game, setGame] = useState(false);
@@ -25,14 +24,13 @@ const GameRoom = ({id}) => {
         firstName:"No One",
         lastName: "LoggedIn"
     })
-
     
     useEffect( () => {
         axios.get(`http://localhost:8000/api/games/${id}`)
             .then(res => {
                 setGame(res.data.results);
             }).catch(err => console.error(err.errors));
-    }, [id]);
+    }, [id, game.whiteToPlay]);
 
     const deleteGame = e => {
         axios.delete(`http://localhost:8000/api/games/${id}`)
