@@ -5,6 +5,11 @@ import {useState, useEffect} from 'react';
 import Axios from 'axios';
 
 const Edit = props => {
+    const [loggedIn, setLoggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
+        firstName: "No One",
+        lastName: "LoggedIn"
+    });
+
     const [user, setUser] = useState(false);
     const [pwInputs, setPwInputs] = useState({
         oldpw: "",
@@ -16,9 +21,10 @@ const Edit = props => {
         newpw: false,
         confirmpw: false
     });
+    const [changedPW, setChangedPW] = useState("");
 
     useEffect(() => {
-        Axios.get(`http://localhost:8000/api/users/${props.id}`)
+        Axios.get(`http://localhost:8000/api/users/${props.id}`, {withCredentials:true})
             .then(res => setUser(res.data.results))
             .catch(err => console.log(err))
     }, [props])
@@ -41,9 +47,9 @@ const Edit = props => {
 
     const handleSubmit = e => {
         e.preventDefault();
-
-        Axios.put(`http://localhost:8000/api/users/${props.id}`, user)
-        .then(res => navigate('/'))
+        
+        Axios.put(`http://localhost:8000/api/users/${props.id}`, user, {withCredentials:true})
+        .then(res => navigate(`/users/show/${props.id}`))
         .catch(err => {
             console.log(err.response.data.errors);
             setErrors(err.response.data.errors)
@@ -65,47 +71,63 @@ const Edit = props => {
     const goBack = e => {
         e.preventDefault();
         document.getElementById("changepw").style.display = "none";
+        setPwInputs({
+            oldpw: "",
+            newpw: "",
+            confirmpw: ""
+        });
+        setChangedPW("");
     }
 
     const updatePw = e => {
         e.preventDefault();
-
-        if(pwInputs.oldpw !== user.password){
-            return (setPwErrors({
-                oldpw: "Password incorrect",
-                newpw: false,
-                confirmpw: false
-            }));
-        }
-        if(pwInputs.newpw.length < 8){
-            return (setPwErrors({
-                oldpw: false,
-                newpw: "Password must be at least 8 characters",
-                confirmpw: false
-
-            }));
-        }
         if(pwInputs.newpw !== pwInputs.confirmpw){
-            return (setPwErrors({
-                oldpw: false,
-                newpw: false,
+            setPwErrors({
+                ...pwErrors,
                 confirmpw: "Passwords must match!"
-            }));
-        }
-
-        Axios.put(`http://localhost:8000/api/users/${props.id}`, {password: pwInputs.newpw})
-            .then( () => navigate(`/users/show/${props.id}`))
-            .catch(err => {
-                console.log(err.response.data.errors);
-                setErrors(err.response.data.errors)
             });
+            return;
+        }
+        // check oldpassword against bcrypt hash using Axios call
+        Axios.post(
+                'http://localhost:8000/api/checkpassword', 
+                {
+                    email: loggedIn.email,
+                    password: pwInputs.oldpw,
+                    newPassword: pwInputs.newpw,
+                    confirmPassword: pwInputs.confirmpw
+                },
+                {withCredentials:true}
+            ).then(res => {
+                setPwInputs({
+                    oldpw: "",
+                    newpw: "",
+                    confirmpw: ""
+                });
+                setPwErrors({
+                    oldpw: false,
+                    newpw: false,
+                    confirmpw: false
+                })
+
+                // console.log(res.data);
+                if (res.data.msg) {
+                    setChangedPW(res.data.msg);
+                    document.getElementById("changepw").style.display = "none";
+                }
+                else {
+                    console.log("You didn't do it :(");
+                }
+            })
+            .catch(err => console.error({errors: err}));
     }
 
     return(
         <>
             {
-                user?
+                user._id === loggedIn._id?
                 <>
+                    <p className="text-success">{changedPW}</p>
                     <UserForm 
                         inputs = {user}
                         title = "Edit User"
@@ -116,7 +138,6 @@ const Edit = props => {
                         editing = {true}
                         showPopup = {showPopup}
                     /> 
-                    <p>Password: {user? user.password : ""}</p>
                     <div id="changepw" style={{display: "none"}}>
                         <ChangePassword
                             handleChange = {handlepwInputs}
@@ -128,7 +149,7 @@ const Edit = props => {
                     </div>
                 </>    
                 :
-                <h2>Loading....</h2>
+                <h2>Not For You!</h2>
             }   
         </>
     )

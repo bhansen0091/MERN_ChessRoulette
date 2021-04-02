@@ -1,22 +1,41 @@
-/* *{
-
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    vertical-align: top;
 }
 
-.row{
-
-} */
+.tileRow{
+    min-width: 480px;
+}
 
 .tile{
-    width: 75px;
-    height: 75px;
-    display: inline-block;
+    width: 60px;
+    height: 60px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .white{
-    background-color: antiquewhite;
+    background-color: navajowhite;
 }
 
 .black{
-    background-color: black;
+    background-color: peru;
     color: antiquewhite;
+}
+
+.active{
+    background-color: dodgerblue;
+}
+
+.available{
+    background-color: limegreen;
+    border: 2px solid forestgreen;
+}
+
+.capture{
+    background-color: firebrick;
+    border: 2px solid lightcoral;
 }

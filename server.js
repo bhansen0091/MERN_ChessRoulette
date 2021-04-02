@@ -3,12 +3,48 @@ require('dotenv').config();
 const express = require('express'),
     app = express(),
     port = process.env.PORT,
-    // port = 8000;
     cors = require('cors'),
-    server = app.listen(port, () => console.log(`Listening on ${port}`));
+    cookieParser = require('cookie-parser'),
+    server = app.listen(port, () => console.log(`Listening on ${port}`)),
+    io = require('socket.io')(server, {
+        cors: {
+            origin: "*"
+        }
+    });
 
+    
+app.use(cookieParser(),cors({credentials:true, origin: 'http://localhost:3000'}),express.json(),express.urlencoded({"extended":true}));
 
-app.use(cors(),express.json(),express.urlencoded({"extended":true}));
+const chats = [];
+    
+
+io.on("connection", socket => {
+
+    //emit sends data only to the client that sent the event
+    // socket.emit("welcome", {msg: "from socket"});
+
+    //broadcast.emit sends data to all clients except the sender
+    // socket.broadcast.emit("joined", "another client joined the chat");
+
+    // socket.on("game", data => {
+        // 
+    // })
+
+    socket.on("disconnect", data =>{
+        console.log("A User disconnected.");
+    })
+
+    socket.on("addToChat", data =>{
+        chats.push(data);
+        //io.emit sends to all clients connected
+        io.emit("updatingMessages", chats)
+    })
+
+    // socket.on("madeAMove", data => {
+    //     io.emit("newMoveCameIn", data);
+    // });
+})
+
 
 require('./server/config/database.config');
 require('./server/routes/user.routes')(app);
