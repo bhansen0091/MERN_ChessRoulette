@@ -8,15 +8,17 @@ const rules = require("./MoveLogic/StandardChess/standardChessMoves")
 
 const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, flipTurn, specialInfo, begun, playerIds}) => {
 
+    
+    const [loggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
+        firstName:"No One",
+        lastName: "LoggedIn"
+    });
     const [boardStatus, setBoardStatus] = useState(false);
     const [moveLog, setMoveLog] = useState([]);
     const [activeTile, setActiveTile] = useState(false);
     const [availableMoves, setAvailableMoves] = useState(false);
     const [info, setInfo] = useState({});
-    const [loggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
-        firstName:"No One",
-        lastName: "LoggedIn"
-    })
+    
 
     useEffect( () => {
         setBoardStatus(statusFromParent);
@@ -29,6 +31,10 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     useEffect( () => {
         setInfo({...specialInfo, squares: "hello"});
     }, [specialInfo]);
+
+    useEffect(() => {
+        console.log(boardStatus);
+    }, [whiteToPlay])
 
 
     const clickTile = (tile) => {
@@ -116,6 +122,8 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
             }
             return;
         }
+
+
         // setAvailableMoves(false);
 
         // if(activeTile[0] === tile.file && activeTile[1] === tile.rank){

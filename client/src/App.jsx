@@ -37,7 +37,7 @@ const App = () => {
 
   return (
     <div className="App d-flex flex-wrap justify-content-center p-3">
-      <div className="d-flex col-12 mx-auto justify-content-around flex-wrap">
+      <div className="d-flex col-sm-12 col-md-12 col-lg-12 mx-auto justify-content-around flex-wrap">
         <Link to="/dashboard">Home</Link>
         <Link to="/games/new">New Game</Link>
       </div>
