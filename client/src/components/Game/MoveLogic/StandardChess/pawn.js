@@ -2,7 +2,7 @@
 
 
 
-const checkMoves =  (tile, boardStatus) => {
+const checkMoves =  (tile, boardStatus, specialInfo) => {
     const rankIdx = 8 - tile.rank;
     const fileArray = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const fileIdx = fileArray.indexOf(tile.file);
@@ -10,6 +10,7 @@ const checkMoves =  (tile, boardStatus) => {
 
     const moves = [];
     
+    // White pawns: normal moves
     if(piece.color === "white"){
         if(rankIdx > 0 && !boardStatus[rankIdx-1][fileIdx].occupied){
             moves.push([tile.file, tile.rank + 1])
@@ -19,18 +20,27 @@ const checkMoves =  (tile, boardStatus) => {
         }
 
         // Capturing
-        if(fileIdx > 0 && rankIdx > 0
-            && boardStatus[rankIdx-1][fileIdx-1].occupied
-            && boardStatus[rankIdx-1][fileIdx-1].occupied.color !== piece.color){
+        if(fileIdx > 0 && rankIdx > 0 
+            && ((boardStatus[rankIdx-1][fileIdx-1].occupied
+              && boardStatus[rankIdx-1][fileIdx-1].occupied.color !== piece.color)
+            || (fileArray[fileIdx-1] === specialInfo.enPassantAvailable[0]
+              && tile.rank + 1 === specialInfo.enPassantAvailable[1]))
+            ){
                 moves.push([fileArray[fileIdx - 1], tile.rank + 1]);
             }
         if(fileIdx < 7 && rankIdx > 0
-            && boardStatus[rankIdx-1][fileIdx+1].occupied
-            && boardStatus[rankIdx-1][fileIdx+1].occupied.color !== piece.color){
+            && ((boardStatus[rankIdx-1][fileIdx+1].occupied
+              && boardStatus[rankIdx-1][fileIdx+1].occupied.color !== piece.color)
+            || (fileArray[fileIdx+1] === specialInfo.enPassantAvailable[0]
+              && tile.rank + 1 === specialInfo.enPassantAvailable[1]))
+            ){
                 moves.push([fileArray[fileIdx + 1], tile.rank + 1]);
             }
 
-    
+        // En Passant: we'll get there
+        // if(specialInfo.enPassantAvailable.length && 
+
+    // Black pawns: normal moves
     } else if (piece.color === "black") {
         if(!boardStatus[rankIdx+1][fileIdx].occupied) moves.push([tile.file, tile.rank - 1])
         if(tile.rank === 7){ // Let black pawns move 2 on first move:
@@ -39,15 +49,24 @@ const checkMoves =  (tile, boardStatus) => {
 
         // Capturing
         if(fileIdx > 0 && rankIdx < 7
-            && boardStatus[rankIdx+1][fileIdx-1].occupied
-            && boardStatus[rankIdx+1][fileIdx-1].occupied.color === "white"){
+            && ((boardStatus[rankIdx+1][fileIdx-1].occupied
+              && boardStatus[rankIdx+1][fileIdx-1].occupied.color === "white")
+            || (fileArray[fileIdx-1] === specialInfo.enPassantAvailable[0]
+              && tile.rank - 1 === specialInfo.enPassantAvailable[1]))
+              
+            ){
                 moves.push([fileArray[fileIdx - 1], tile.rank - 1]);
             }
         if(fileIdx < 7 && rankIdx < 7
-            && boardStatus[rankIdx+1][fileIdx+1].occupied
-            && boardStatus[rankIdx+1][fileIdx+1].occupied.color === "white"){
+            && ((boardStatus[rankIdx+1][fileIdx+1].occupied
+              && boardStatus[rankIdx+1][fileIdx+1].occupied.color === "white")
+            || (fileArray[fileIdx+1] === specialInfo.enPassantAvailable[0]
+              && tile.rank - 1 === specialInfo.enPassantAvailable[1]))
+            ){
                 moves.push([fileArray[fileIdx + 1], tile.rank - 1]);
             }
+
+
     }
     return moves;
 }

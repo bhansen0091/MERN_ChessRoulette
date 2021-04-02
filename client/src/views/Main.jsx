@@ -46,7 +46,7 @@ const Main = props => {
             </div>
             {
                 users ?
-                    <table className="col-7 border table table-hover mx-auto">
+                    <table className="col-lg-7 col-md-12 col-sm-12 col-xs-12 border table table-hover mx-auto">
                         <thead>
                             <tr>
                                 <th>Name</th>

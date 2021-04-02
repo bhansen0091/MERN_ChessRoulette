@@ -1,4 +1,4 @@
-const checkMoves =  (tile, boardStatus) => {
+const checkMoves =  (tile, boardStatus, specialInfo) => {
     const rankIdx = 8 - tile.rank;
     const fileArray = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const fileIdx = fileArray.indexOf(tile.file);
@@ -37,6 +37,25 @@ const checkMoves =  (tile, boardStatus) => {
 
     if(rankIdx + i < 8 && fileIdx - i >= 0 && boardStatus[rankIdx+i][fileIdx-i].occupied.color !== piece.color){
         moves.push([fileArray[fileIdx-i], tile.rank - i]);
+    }
+
+    // Castling:
+    if(specialInfo.castlingLegal.hasOwnProperty(`${tile.file}${tile.rank}`) && specialInfo.castlingLegal[`${tile.file}${tile.rank}`]){
+        // check king-side:
+        if(specialInfo.castlingLegal[`H${tile.rank}`] 
+        && !boardStatus[rankIdx][5].occupied
+        && !boardStatus[rankIdx][6].occupied
+        ){
+            moves.push(["G", tile.rank]);
+        }
+        //check queen-side:
+        if(specialInfo.castlingLegal[`A${tile.rank}`] 
+        && !boardStatus[rankIdx][3].occupied
+        && !boardStatus[rankIdx][2].occupied
+        && !boardStatus[rankIdx][1].occupied
+        ){
+            moves.push(["C", tile.rank]);
+        }
     }
 
 

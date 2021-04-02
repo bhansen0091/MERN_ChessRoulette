@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+// import {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Router, Link} from '@reach/router';
 // import Create from './views/User/Create';
@@ -10,7 +10,7 @@ import LogReg from './views/User/LogReg';
 import NewGame from './views/Game/NewGame';
 import './App.css';
 
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 const App = () => {
 
@@ -37,7 +37,7 @@ const App = () => {
 
   return (
     <div className="App d-flex flex-wrap justify-content-center p-3">
-      <div className="d-flex col-12 mx-auto justify-content-around flex-wrap">
+      <div className="d-flex col-sm-12 col-md-12 col-lg-12 mx-auto justify-content-around flex-wrap">
         <Link to="/dashboard">Home</Link>
         <Link to="/games/new">New Game</Link>
       </div>

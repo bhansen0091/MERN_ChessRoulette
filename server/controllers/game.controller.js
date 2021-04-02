@@ -45,13 +45,15 @@ module.exports = {
     },
 
     removePlayerWhite : (req, res) => {
-        Game.findOneAndUpdate({_id:req.params.gameId}, {$pull: {playerWhite: {_id: req.params.userId}}}, {runValidators:true, new:true, useFindAndModify: false})
+        // Game.findOneAndUpdate({_id:req.params.gameId}, {$pull: {playerWhite: {_id: req.params.userId}}}, {runValidators:true, new:true, useFindAndModify: false})
+        Game.findOneAndUpdate({_id:req.params.gameId}, {playerWhite: []}, {runValidators:true, new:true, useFindAndModify: false})
             .then(data => res.json({results:data}))
             .catch(err => res.status(404).json({errors: err.errors}))
     },
 
     removePlayerBlack : (req, res) => {
-        Game.findOneAndUpdate({_id:req.params.gameId}, {$pull: {playerBlack: {_id: req.params.userId}}}, {runValidators:true, new:true, useFindAndModify: false})
+        // Game.findOneAndUpdate({_id:req.params.gameId}, {$pull: {playerBlack: {_id: req.params.userId}}}, {runValidators:true, new:true, useFindAndModify: false})
+        Game.findOneAndUpdate({_id:req.params.gameId}, {playerBlack: []}, {runValidators:true, new:true, useFindAndModify: false})
             .then(data => res.json({results:data}))
             .catch(err => res.status(404).json({errors: err.errors}))
     },
