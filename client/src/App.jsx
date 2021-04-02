@@ -8,6 +8,7 @@ import Main from './views/Main';
 import GameRoom from './views/Game/GameRoom';
 import LogReg from './views/User/LogReg';
 import NewGame from './views/Game/NewGame';
+import GameLobby from './views/Game/GameLobby';
 import './App.css';
 
 // import io from 'socket.io-client';
@@ -39,6 +40,7 @@ const App = () => {
     <div className="App d-flex flex-wrap justify-content-center p-3">
       <div className="d-flex col-sm-12 col-md-12 col-lg-12 mx-auto justify-content-around flex-wrap">
         <Link to="/dashboard">Home</Link>
+        <Link to="/games">All Games</Link>
         <Link to="/games/new">New Game</Link>
       </div>
       {/* <div className="form-group border col-4 d-flex align-items-end">
@@ -76,6 +78,7 @@ const App = () => {
 
           {/* <GameRoom path="/games" /> */}
           <NewGame path="/games/new" />
+          <GameLobby path="/games" />
           <GameRoom path="/games/:id" />
         </Router>
       </div>

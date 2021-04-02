@@ -2,14 +2,13 @@ import {useState, useEffect} from "react";
 import Axios from "axios";
 
 import styles from "./GameBoard.module.css";
-// import { io } from "socket.io-client";
-// import blackBishop from "./img/blackBishop.png";
+import io from "socket.io-client";
 
 const rules = require("./MoveLogic/StandardChess/standardChessMoves")
 
 const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, flipTurn, specialInfo, begun, playerIds}) => {
 
-    // const [socket] = useState( () => io(":8000"));
+    const [socket] = useState( () => io(":8000"));
     const [loggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
         firstName:"No One",
         lastName: "LoggedIn"
@@ -19,7 +18,6 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     const [activeTile, setActiveTile] = useState(false);
     const [availableMoves, setAvailableMoves] = useState(false);
     const [info, setInfo] = useState({});
-    const [dummy, setDummy] = useState(false);
     
 
     useEffect( () => {
@@ -34,20 +32,42 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
         setInfo({...specialInfo, squares: "hello"});
     }, [specialInfo]);
 
-    // every time we make a move, send to socket
-    // useEffect(() => {
-    //     console.log(boardStatus);
-    //     socket.emit("madeAMove", boardStatus);
-    // }, [whiteToPlay])
 
-    // useEffect( () => {
-    //     socket.on("newMoveCameIn", data => {
-    //         if(boardStatus !== false){
-    //             setBoardStatus([...data]);
-    //         }
-    //     });
-    //     return () => socket.disconnect(true);
-    // }, [socket]);
+
+
+    // every time we make a move, send to socket
+    useEffect(() => {
+        if(boardStatus !== false){
+            console.log("board status being sent to server is");
+            console.log(boardStatus);
+            socket.emit("madeAMove", boardStatus);
+        }
+    }, [whiteToPlay])
+
+    // when a new move comes in, update the board status
+    useEffect( () => {
+        // console.log("got the board status and it is:");
+        // console.log(boardStatus);
+
+        socket.on("newMoveCameIn", data => {
+            console.log("data:");
+            console.log(data);
+            console.log("board status:");
+            console.log(boardStatus);            
+
+            // not getting into here vvv
+            if(boardStatus === false){
+                console.log("got through the if");
+                setBoardStatus(data);
+                console.log(data);
+            }
+
+        });
+        return () => socket.disconnect(true);
+    }, [socket]);
+
+
+
 
 
     const clickTile = (tile) => {
@@ -69,7 +89,7 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
                 // make move on front end:
                 tile.occupied = activeTile.occupied;
                 activeTile.occupied = false;
-                flipTurn();
+                // flipTurn();
                 setActiveTile(false);
                 setAvailableMoves(false);
 
@@ -124,7 +144,7 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
                 
                 // send move to database:
                 Axios.put(`http://localhost:8000/api/games/${gameId}`, {boardStatus, whiteToPlay: !whiteToPlay, moveLog: moveLogTemp, $set: {"specialInfo.enPassantAvailable": enPassant, "specialInfo.castlingLegal": castlingLegalAfterThisMove}})
-                    // .then(res => console.log(res))
+                    .then(() => flipTurn())
                     .catch(err => console.error({errors: err.errors}))
             }
 
@@ -169,7 +189,6 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     return (
         <div id="board">
             <h3>{whiteToPlay? "White" : "Black"}'s move</h3>
-            <p>{dummy? "yes" : "no"}</p>
             {boardStatus?
                 boardStatus.map( (row, i) =>
                     <div className={styles.tileRow} key={i}>
