@@ -6,7 +6,7 @@ import io from "socket.io-client";
 
 const rules = require("./MoveLogic/StandardChess/standardChessMoves")
 
-const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, flipTurn, specialInfo, begun, playerIds}) => {
+const GameBoard = ({statusFromParent, images, gameId, parentLog, flipTurn, specialInfo, begun, playerIds}) => {
 
     const [socket] = useState( () => io(":8000"));
     const [loggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
@@ -18,6 +18,15 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     const [activeTile, setActiveTile] = useState(false);
     const [availableMoves, setAvailableMoves] = useState(false);
     const [info, setInfo] = useState({});
+
+    const [whiteToPlay, setWhiteToPlay] = useState(true);
+
+    useEffect( () => {
+        Axios.get(`http://localhost:8000/api/games/${gameId}`)
+            .then(res => {
+                setWhiteToPlay(res.data.results.whiteToPlay);
+            }).catch(err => console.error(err.errors));
+    }, [gameId])
     
 
     useEffect( () => {
@@ -29,7 +38,7 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     }, [parentLog]);
 
     useEffect( () => {
-        setInfo({...specialInfo, squares: "hello"});
+        setInfo({...specialInfo});
     }, [specialInfo]);
 
 
@@ -40,7 +49,7 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
         if(boardStatus !== false){
             console.log("board status being sent to server is");
             console.log(boardStatus);
-            socket.emit("madeAMove", boardStatus);
+            socket.emit("madeAMove", {boardStatus, whiteToPlay});
         }
     }, [whiteToPlay])
 
@@ -58,7 +67,8 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
             // not getting into here vvv
             if(boardStatus === false){
                 console.log("got through the if");
-                setBoardStatus(data);
+                setBoardStatus(data.boardStatus);
+                setWhiteToPlay(data.whiteToPlay);
                 console.log(data);
             }
 
@@ -89,7 +99,8 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
                 // make move on front end:
                 tile.occupied = activeTile.occupied;
                 activeTile.occupied = false;
-                // flipTurn();
+                flipTurn();
+                setWhiteToPlay(!whiteToPlay);
                 setActiveTile(false);
                 setAvailableMoves(false);
 
