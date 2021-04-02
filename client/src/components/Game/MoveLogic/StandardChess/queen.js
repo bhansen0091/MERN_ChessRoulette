@@ -1,4 +1,4 @@
-const checkMoves =  (tile, boardStatus) => {
+const checkMoves =  (tile, boardStatus, specialInfo) => {
     const rankIdx = 8 - tile.rank;
     const fileArray = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const fileIdx = fileArray.indexOf(tile.file);

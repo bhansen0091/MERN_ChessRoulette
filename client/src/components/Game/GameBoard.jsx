@@ -6,14 +6,17 @@ import styles from "./GameBoard.module.css";
 
 const rules = require("./MoveLogic/StandardChess/standardChessMoves")
 
-const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, flipTurn, specialInfo}) => {
+const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, flipTurn, specialInfo, begun, playerIds}) => {
 
     const [boardStatus, setBoardStatus] = useState(false);
     const [moveLog, setMoveLog] = useState([]);
     const [activeTile, setActiveTile] = useState(false);
     const [availableMoves, setAvailableMoves] = useState(false);
-    const [turnWarning, setTurnWarning] = useState("");
     const [info, setInfo] = useState({});
+    const [loggedIn] = useState(JSON.parse(localStorage.getItem("user")) || {
+        firstName:"No One",
+        lastName: "LoggedIn"
+    })
 
     useEffect( () => {
         setBoardStatus(statusFromParent);
@@ -24,14 +27,18 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     }, [parentLog]);
 
     useEffect( () => {
-        setInfo(specialInfo);
+        setInfo({...specialInfo, squares: "hello"});
     }, [specialInfo]);
 
 
     const clickTile = (tile) => {
         if(movesToHere(tile)){
+
             // Check if the piece being moved is the correct color, based on turn:
-            if((activeTile.occupied.color === "white") - (whiteToPlay) === 0){
+            if(begun
+                && (activeTile.occupied.color === "white") - (whiteToPlay) === 0
+                && playerIds[whiteToPlay ? "white" : "black"] === loggedIn._id
+            ){
 
                 // build the chess-notation description of the move:
                 let moveDescription = "";
@@ -39,6 +46,53 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
                     tile.occupied? activeTile.file.toLowerCase() : "";
                 moveDescription += tile.occupied? "x" : "";
                 moveDescription += tile.file.toLowerCase() + tile.rank;
+
+                // make move on front end:
+                tile.occupied = activeTile.occupied;
+                activeTile.occupied = false;
+                flipTurn();
+                setActiveTile(false);
+                setAvailableMoves(false);
+
+                const rankIdx = 8 - tile.rank;
+                const fileArray = ["A", "B", "C", "D", "E", "F", "G", "H"];
+                const fileIdx = fileArray.indexOf(tile.file);
+                // Special Case: En Passant
+                    // facilitate capturing
+                    if(tile.occupied.type === "pawn" && tile.file === info.enPassantAvailable[0] && tile.rank === info.enPassantAvailable[1]){
+                        boardStatus[tile.occupied.color === "white" ? 3 : 4][fileIdx].occupied = false;
+                        moveDescription = `${activeTile.file.toLowerCase()}x`+ moveDescription;
+                    }
+                    // update special info if necessary
+                    let enPassant = false;
+                    if((tile.occupied.type === "pawn") && ((Math.abs(activeTile.rank - tile.rank)) === 2)){
+                        enPassant = [tile.file, (tile.rank + activeTile.rank)/2];
+                    }
+                    setInfo({...info, enPassantAvailable: enPassant, squares: `${tile.file}, ${(tile.rank + activeTile.rank)/2}`});
+                
+                // Special Case: Castling
+                    // facilitate rooks also moving
+                    if(tile.occupied.type === "king" && Math.abs(fileIdx - fileArray.indexOf(activeTile.file)) === 2){
+                        if(tile.file === "G"){
+                            boardStatus[rankIdx][5].occupied = {...boardStatus[rankIdx][7].occupied};
+                            boardStatus[rankIdx][7].occupied = false;
+                        }
+                        if(tile.file === "C"){
+                            boardStatus[rankIdx][3].occupied = {...boardStatus[rankIdx][7].occupied};
+                            boardStatus[rankIdx][0].occupied = false;
+                        }
+                    }
+                    // update special info if necessary
+                    let castlingLegalAfterThisMove = {...specialInfo.castlingLegal};
+                    let castleFilesRooks = ["A", "H"], castleRanks = [1, 8];
+                    for(let file of castleFilesRooks){
+                        for(let rank of castleRanks){
+                            if((tile.file === file && tile.rank === rank) || (activeTile.file === file && activeTile.rank === rank)){
+                                castlingLegalAfterThisMove[`${file}${rank}`] = false;
+                            }
+                        }
+                        // if(
+                    }
 
                 // add the new move to the move log (which is an array of move pairs):
                 const moveLogTemp = [...moveLog];
@@ -48,26 +102,9 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
                     moveLogTemp.push([moveDescription])
                 }
                 setMoveLog(moveLogTemp);
-
-                // make move on front end:
-                tile.occupied = activeTile.occupied;
-                activeTile.occupied = false;
-                flipTurn();
-                setActiveTile(false);
-                setAvailableMoves(false);
-
-                // update special info if necessary
-                let enPassant;
-                if(activeTile.occupied.type === "pawn" && activeTile.rank - tile.rank === 2){
-                    enPassant = [tile.file, (tile.rank + activeTile.rank)/2]
-                } else{
-                    enPassant = false;
-                }
-                setInfo({...info, enPassantAvailable: enPassant, squares: });}
-
                 
                 // send move to database:
-                Axios.put(`http://localhost:8000/api/games/${gameId}`, {boardStatus, whiteToPlay: !whiteToPlay, moveLog: moveLogTemp})
+                Axios.put(`http://localhost:8000/api/games/${gameId}`, {boardStatus, whiteToPlay: !whiteToPlay, moveLog: moveLogTemp, $set: {"specialInfo.enPassantAvailable": enPassant, "specialInfo.castlingLegal": castlingLegalAfterThisMove}})
                     // .then(res => console.log(res))
                     .catch(err => console.error({errors: err.errors}))
             }
@@ -89,7 +126,7 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
         // else
         if(tile.occupied){
             setActiveTile(tile);
-            setAvailableMoves(rules[tile.occupied.type](tile, boardStatus))
+            setAvailableMoves(rules[tile.occupied.type](tile, boardStatus, info))
         }
         else{
             setActiveTile(false);
@@ -111,7 +148,6 @@ const GameBoard = ({statusFromParent, images, gameId, whiteToPlay, parentLog, fl
     return (
         <div id="board">
             <h3>{whiteToPlay? "White" : "Black"}'s move</h3>
-            <p>{info.enPassantAvailable}</p>
             {boardStatus?
                 boardStatus.map( (row, i) =>
                     <div className={styles.tileRow} key={i}>

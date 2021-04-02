@@ -38,7 +38,11 @@ const GameSchema = new mongoose.Schema({
     specialInfo: {
         type: {},
         default: allSpecialInfo.standardChess()
-    }
+    },
+    begun: {
+        type: Boolean,
+        default: false
+    },
     
 }, {timestamps:true});
 
