@@ -20,6 +20,8 @@ const chats = [];
 
 io.on("connection", socket => {
 
+    console.log(socket.id);
+
     //emit sends data only to the client that sent the event
     // socket.emit("welcome", {msg: "from socket"});
 
@@ -40,9 +42,12 @@ io.on("connection", socket => {
         io.emit("updatingMessages", chats)
     })
 
-    // socket.on("madeAMove", data => {
-    //     io.emit("newMoveCameIn", data);
-    // });
+    socket.on("madeAMove", data => {
+        console.log("Received a new move!");
+        // console.log(data);
+
+        io.emit("newMoveCameIn", data);
+    });
 })
 
 

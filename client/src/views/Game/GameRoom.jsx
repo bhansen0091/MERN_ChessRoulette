@@ -30,7 +30,7 @@ const GameRoom = ({id}) => {
             .then(res => {
                 setGame(res.data.results);
             }).catch(err => console.error(err.errors));
-    }, [id, game.whiteToPlay]);
+    }, [id]);
 
     const deleteGame = e => {
         axios.delete(`http://localhost:8000/api/games/${id}`)

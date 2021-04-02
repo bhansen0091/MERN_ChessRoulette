@@ -10,7 +10,7 @@ const UserForm = props => {
     }
 
     return(
-        <form onSubmit={handleSubmit} className="col-6 mx-auto">
+        <form onSubmit={handleSubmit} className="col-10 mx-auto">
             <h2 className="text-center">{title}</h2>
             <div className="form-group">
                 <label htmlFor="firstName">First Name:</label>
