@@ -217,7 +217,7 @@ const GameBoard = ({statusFromParent, images, gameId, parentLog, flipTurn, speci
                                 key={j}
                                 id={`${tile.file}${tile.rank}`}
                                 onClick={() => clickTile(tile)}
-                            >{tile.file} {tile.rank}
+                            >
                             
                                 {tile.occupied? 
                                     <img 
