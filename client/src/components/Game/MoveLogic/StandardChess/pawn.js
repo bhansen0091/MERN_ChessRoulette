@@ -37,9 +37,6 @@ const checkMoves =  (tile, boardStatus, specialInfo) => {
                 moves.push([fileArray[fileIdx + 1], tile.rank + 1]);
             }
 
-        // En Passant: we'll get there
-        // if(specialInfo.enPassantAvailable.length && 
-
     // Black pawns: normal moves
     } else if (piece.color === "black") {
         if(!boardStatus[rankIdx+1][fileIdx].occupied) moves.push([tile.file, tile.rank - 1])

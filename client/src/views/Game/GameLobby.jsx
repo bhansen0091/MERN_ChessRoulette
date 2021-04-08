@@ -19,14 +19,16 @@ const GameLobby = props => {
             {gameList? 
                 gameList.map( (game, i) =>
                     <>
-                        <Link key={i} to={`/games/${game._id}`}>
-                            <p>Game {i+1}: {game.type}, between {game.playerWhite.length?
+                        <p key={i}>
+                            Game {i+1}: 
+                            <Link to={`/games/${game._id}`}>
+                            {game.type}, between {game.playerWhite.length?
                                 game.playerWhite[0].userName :
                                 "(no one joined)"} and {game.playerBlack.length?
                                 game.playerBlack[0].userName :
                                 "(no one joined)"}
-                            </p>
-                        </Link>
+                            </Link>
+                        </p>
                     </>
                 )
 
