@@ -72,6 +72,8 @@ const GameBoard = ({statusFromParent, gameId, parentLog, specialInfo, begun, pla
             setInfo(data.info);
             setWhiteToPlay(data.whiteToPlay);
             setMoveLog(data.moveLog);
+            setActiveTile(false);
+            setAvailableMoves(false);
         });
         return () => socket.disconnect(true);
     }, [socket]);
@@ -199,43 +201,42 @@ const GameBoard = ({statusFromParent, gameId, parentLog, specialInfo, begun, pla
     return (
         <div id="board">
             <h3>{whiteToPlay? "White" : "Black"}'s move</h3>
-            {boardStatus?
-                (viewAsBlack ? boardStatus.reverse() : boardStatus)
-                .map( (row, i) =>
-                    <div className={styles.tileRow} key={i}>
-                        {(viewAsBlack? row.reverse() : row)
-                        .map( (tile, j) =>
-                            <div
-                                className={`
-                                    ${styles.tile}
-                                    ${(i+j) % 2 === 0? styles.white : styles.black}
-                                    ${activeTile.file === tile.file && activeTile.rank === tile.rank ? styles.active : ""}
-                                    ${movesToHere(tile) ? 
-                                        tile.occupied? styles.capture : styles.available
-                                        : ""}
-                                    
-                                `} 
-                                key={j}
-                                id={`${tile.file}${tile.rank}`}
-                                onClick={() => clickTile(tile)}
-                            >
-                            
-                                {tile.occupied? 
-                                    <img 
-                                        src={images[`${tile.occupied.color}${tile.occupied.type}${spriteStyle}`]} 
-                                        alt={`${tile.occupied.color[0]} ${tile.occupied.abbrev}`}
-                                    />
-                                    : 
-                                    " "
-                                }
-                            </div>
-                        )}
-                    </div>
-                )
-                :
-                <p>Loading...</p>
-            }
-
+            <div className={viewAsBlack? styles.boardContainerBlack : styles.boardContainer}>
+                {boardStatus?
+                    boardStatus.map( (row, i) =>
+                        <div className={viewAsBlack? styles.tileRowBlack : styles.tileRowWhite} key={i}>
+                            {row.map( (tile, j) =>
+                                <div
+                                    className={`
+                                        ${styles.tile}
+                                        ${(i+j) % 2 === 0? styles.white : styles.black}
+                                        ${activeTile.file === tile.file && activeTile.rank === tile.rank ? styles.active : ""}
+                                        ${movesToHere(tile) ? 
+                                            tile.occupied? styles.capture : styles.available
+                                            : ""}
+                                        
+                                    `} 
+                                    key={j}
+                                    id={`${tile.file}${tile.rank}`}
+                                    onClick={() => clickTile(tile)}
+                                >
+                                
+                                    {tile.occupied? 
+                                        <img 
+                                            src={images[`${tile.occupied.color}${tile.occupied.type}${spriteStyle}`]} 
+                                            alt={`${tile.occupied.color[0]} ${tile.occupied.abbrev}`}
+                                        />
+                                        : 
+                                        " "
+                                    }
+                                </div>
+                            )}
+                        </div>
+                    )
+                    :
+                    <p>Loading...</p>
+                }
+            </div>
             <button className="btn btn-warning my-2" onClick = {() => setViewAsBlack(!viewAsBlack)}>Flip board</button>
 
             <h3>Moves:</h3>

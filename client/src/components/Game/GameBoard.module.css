@@ -5,8 +5,28 @@
     vertical-align: top;
 }
 
-.tileRow{
+.boardContainerWhite{
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 950px;
+}
+
+.boardContainerBlack{
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 950px;
+    flex-direction: column-reverse;
+}
+
+.tileRowWhite{
     min-width: 480px;
+    display: flex;
+}
+
+.tileRowBlack{
+    min-width: 480px;
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 .tile{
